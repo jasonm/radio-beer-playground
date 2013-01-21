@@ -3,12 +3,6 @@ nfc-beer
 
 Notes for the `nfc-beer` project.
 
-Related Works
--------------
-
-* KegDroid—The Google-Powered Beer Tap
-  * <http://gizmodo.com/5906483/kegdroidthe-google+powered-beer-tap>
-
 The Vision
 ----------
 
@@ -102,3 +96,9 @@ API clients
   and displays `beer` information based on that.
 * *Bar display* fetches information from core api like tallies of pours, synthesiszes it,
    and displays beautiful visualizations.
+
+Related Works
+-------------
+
+* KegDroid—The Google-Powered Beer Tap
+  * <http://gizmodo.com/5906483/kegdroidthe-google+powered-beer-tap>
