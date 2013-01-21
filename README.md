@@ -63,18 +63,23 @@ NFC labels + controllers.
 * NFC tags
   * <http://www.buynfctags.com/nfc-tags/stickers.html>
   * <http://rapidnfc.com/>
+* Printed NFC
+  * <http://www.buynfctags.com/nfc-tags/stickers/custom-printed-nfc-sticker-ul.html>
+* Tasting glasses
+  * <http://beeradvocate.com/community/threads/4-oz-tasting-glasses-or-similar.14643/>
 
 Cost estimate for 1 installation, assume 16 taps, 200 attendees:
 
     Item                 Qty     Ea      Total
     Raspberry Pi         1       35.00    35.00
     NFC controller       16      39.00   624.00
-    NFC tags             200      1.00   200.00
+    Printed NFC sticker  200      1.12   224.00
+    Tasting glasses      200      1.80   360.00
     -------------------------------------------
-                            Grand Total: 859.00
-                      Cost per attendee:   4.30
+                         Grand total:   1234.00
+                   Cost per attendee:      6.22
 
-Unaccounted costs: labels, tasting glasses.  Of course beer, taps, location, etc.
+Of course beer, taps, location, etc. are extra.
 
 Core software layer
 -------------------
