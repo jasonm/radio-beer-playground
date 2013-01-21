@@ -79,11 +79,12 @@ Cost estimate for 1 installation, assume 16 taps, 200 attendees:
 
     Item                 Qty     Ea      Total
     Raspberry Pi         1       35.00    35.00
+    USB Hub              1       10.00    10.00
     NFC controller       16      39.00   624.00
     Printed NFC sticker  200      1.12   224.00
     Tasting glasses      200      1.80   360.00
     -------------------------------------------
-                         Grand total:   1234.00
+                         Grand total:   1244.00
                    Cost per attendee:      6.22
 
 Of course beer, taps, location, etc. are extra.
@@ -97,6 +98,18 @@ technology.
 * EBay USD RFID readers are about $9 shipped.
   <http://www.ebay.com/itm/New-Black-Security-USB-RFID-ID-Proximity-Sensor-Smart-Card-Reader-125Khz-EM4100-/221046309121?pt=BI_Security_Fire_Protection&hash=item3377630101>
 
+    Item                 Qty     Ea      Total
+    Raspberry Pi         1       35.00    35.00
+    USB Hub              1       10.00    10.00
+    RFID controller      16       9.00   144.00
+    Printed RFID sticker 200      0.49    98.00
+    Tasting glasses      200      1.80   360.00
+    -------------------------------------------
+                         Grand total:    647.00
+                   Cost per attendee:      3.25
+
+RFID cost, $0.50/ea in 500qty?
+http://www.atlasrfidstore.com/Alien_Square_Wet_Inlay_WHITE_face_roll_of_500_p/aln-9662-fwrw_500.htm
 
 Driver layer
 ------------
