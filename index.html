@@ -77,15 +77,20 @@ bar visualization.</p>
       <li><a href="http://raspberrypi.stackexchange.com/questions/3475/how-to-get-more-than-one-uart-interface">http://raspberrypi.stackexchange.com/questions/3475/how-to-get-more-than-one-uart-interface</a></li>
     </ul>
   </li>
-  <li>NFC tags
+  <li>NFC chip types
     <ul>
-      <li><a href="http://www.buynfctags.com/nfc-tags/stickers.html">http://www.buynfctags.com/nfc-tags/stickers.html</a></li>
-      <li><a href="http://rapidnfc.com/">http://rapidnfc.com/</a></li>
+      <li><a href="http://www.gototags.com/docs/display/NFC/NFC+Chip+Types">http://www.gototags.com/docs/display/NFC/NFC+Chip+Types</a></li>
     </ul>
   </li>
-  <li>Printed NFC
+  <li>Printed NFC stickers
     <ul>
       <li><a href="http://www.buynfctags.com/nfc-tags/stickers/custom-printed-nfc-sticker-ul.html">http://www.buynfctags.com/nfc-tags/stickers/custom-printed-nfc-sticker-ul.html</a></li>
+      <li><a href="http://www.buynfctags.com/custom-printed-nfc-sticker-ntag203.html">http://www.buynfctags.com/custom-printed-nfc-sticker-ntag203.html</a></li>
+    </ul>
+  </li>
+  <li>Other NFC retailers
+    <ul>
+      <li><a href="http://rapidnfc.com/">http://rapidnfc.com/</a></li>
     </ul>
   </li>
   <li>Tasting glasses
@@ -94,6 +99,11 @@ bar visualization.</p>
     </ul>
   </li>
 </ul>
+
+<p>USB-based readers:
+* <a href="http://www.gototags.com/docs/display/NFC/NFC+Readers">http://www.gototags.com/docs/display/NFC/NFC+Readers</a>
+* USB NFC read/write $45, or $40.50 in qty &gt; 10
+  * <a href="http://www.buynfctags.com/nfc-readers-and-writers/acs-acr122u-nfc-usb-reader-and-writer.html">http://www.buynfctags.com/nfc-readers-and-writers/acs-acr122u-nfc-usb-reader-and-writer.html</a></p>
 
 <p>Cost estimate for 1 installation, assume 16 taps, 200 attendees:</p>
 
@@ -109,7 +119,46 @@ Tasting glasses      200      1.80   360.00
 
 <p>Of course beer, taps, location, etc. are extra.</p>
 
-<h2 id="core-software-layer">Core software layer</h2>
+<p>Another option instead of NFC is RFID.  NFC is two-way comm and read/write; but since
+this is fundamentally an inventory tracking system (object tracking), RFID’s
+read-only mode suffices.  NFC lets you store small amounts of data onto the tag,
+and NFC-p2p mode lets peer devices communicate.  RFID is a passive, activated read
+technology.</p>
+
+<ul>
+  <li>EBay USD RFID readers are about $9 shipped.
+<a href="http://www.ebay.com/itm/New-Black-Security-USB-RFID-ID-Proximity-Sensor-Smart-Card-Reader-125Khz-EM4100-/221046309121?pt=BI_Security_Fire_Protection&amp;hash=item3377630101">http://www.ebay.com/itm/New-Black-Security-USB-RFID-ID-Proximity-Sensor-Smart-Card-Reader-125Khz-EM4100-/221046309121?pt=BI_Security_Fire_Protection&amp;hash=item3377630101</a></li>
+</ul>
+
+<h2 id="driver-layer">Driver layer</h2>
+
+<p>The tap terminal machine will need drivers to receive NFC/RFID scans and
+emit events upstream to the web software layer.</p>
+
+<p>If we use NFC, the driver layer is ???</p>
+
+<ul>
+  <li>http://code.google.com/p/nfc-tools/</li>
+</ul>
+
+<p>If we use RFID, we receive 1 HID-keyboard device per reader which just types
+a 10-digit code.  Can we demux these streams?</p>
+
+<ul>
+  <li><a href="http://stackoverflow.com/questions/8676135/osx-hid-filter-for-secondary-keyboard">http://stackoverflow.com/questions/8676135/osx-hid-filter-for-secondary-keyboard</a></li>
+  <li>evdev on linux
+    <ul>
+      <li><a href="http://hewner.com/2006/08/21/evdev-for-ruby-with-morse-code/">evdev-ruby</a></li>
+      <li><a href="http://stackoverflow.com/questions/5834220/how-to-read-out-an-usb-rfid-reader-imitating-an-hid-keyboard-using-linux-and-pyt">stackoverflow evdev question</a>
+        <ul>
+          <li><a href="http://128.130.182.59:8888/ceat/git/index.php?p=ceatclient.git&amp;a=blob&amp;h=d5be91bcf14cee983afdb03cfe8172b8984ac629&amp;hb=42b464b5a31541e77d9955940d408d1c4bb40f88&amp;f=evdev3.py">python evdev</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="web-software-layer">Web software layer</h2>
 
 <p>Core entities:</p>
 
@@ -138,6 +187,16 @@ and displays <code>beer</code> information based on that.</li>
   <li>KegDroid—The Google-Powered Beer Tap
     <ul>
       <li><a href="http://gizmodo.com/5906483/kegdroidthe-google+powered-beer-tap">http://gizmodo.com/5906483/kegdroidthe-google+powered-beer-tap</a></li>
+    </ul>
+  </li>
+  <li>Flow sensor to Untappd
+    <ul>
+      <li><a href="http://hackaday.com/2012/07/18/kegerator-tallies-your-pints-on-untappd-while-you-sit-back-with-a-cold-one/">http://hackaday.com/2012/07/18/kegerator-tallies-your-pints-on-untappd-while-you-sit-back-with-a-cold-one/</a></li>
+    </ul>
+  </li>
+  <li>tokyohackerspace beer tap + rfid suggestion
+    <ul>
+      <li><a href="https://groups.google.com/forum/#!msg/tokyohackerspace/-sKrUmhuJpc/vP5E0tX6SNYJ">https://groups.google.com/forum/#!msg/tokyohackerspace/-sKrUmhuJpc/vP5E0tX6SNYJ</a></li>
     </ul>
   </li>
 </ul>
