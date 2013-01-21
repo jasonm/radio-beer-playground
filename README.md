@@ -3,6 +3,12 @@ nfc-beer
 
 Notes for the `nfc-beer` project.
 
+Related Works
+-------------
+
+* KegDroid—The Google-Powered Beer Tap
+  * <http://gizmodo.com/5906483/kegdroidthe-google+powered-beer-tap>
+
 The Vision
 ----------
 
