@@ -95,8 +95,8 @@ read-only mode suffices.  NFC lets you store small amounts of data onto the tag,
 and NFC-p2p mode lets peer devices communicate.  RFID is a passive, activated read
 technology.
 
-* EBay USD RFID readers are about $9 shipped.
-  <http://www.ebay.com/itm/New-Black-Security-USB-RFID-ID-Proximity-Sensor-Smart-Card-Reader-125Khz-EM4100-/221046309121?pt=BI_Security_Fire_Protection&hash=item3377630101>
+* [EBay USD RFID readers are about $9 shipped.](http://www.ebay.com/itm/New-Black-Security-USB-RFID-ID-Proximity-Sensor-Smart-Card-Reader-125Khz-EM4100-/221046309121?pt=BI_Security_Fire_Protection&hash=item3377630101)
+
 
     Item                 Qty     Ea      Total
     Raspberry Pi         1       35.00    35.00
@@ -107,6 +107,7 @@ technology.
     -------------------------------------------
                          Grand total:    647.00
                    Cost per attendee:      3.25
+
 
 RFID cost, $0.50/ea in 500qty?
 http://www.atlasrfidstore.com/Alien_Square_Wet_Inlay_WHITE_face_roll_of_500_p/aln-9662-fwrw_500.htm
