@@ -98,6 +98,8 @@ technology.
 * [EBay USD RFID readers are about $9 shipped.](http://www.ebay.com/itm/New-Black-Security-USB-RFID-ID-Proximity-Sensor-Smart-Card-Reader-125Khz-EM4100-/221046309121?pt=BI_Security_Fire_Protection&hash=item3377630101)
 
 
+An RFID cost estimate:
+
     Item                 Qty     Ea      Total
     Raspberry Pi         1       35.00    35.00
     USB Hub              1       10.00    10.00
