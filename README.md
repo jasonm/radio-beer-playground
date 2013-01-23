@@ -97,6 +97,13 @@ technology.
 
 * [EBay USD RFID readers are about $9 shipped.](http://www.ebay.com/itm/New-Black-Security-USB-RFID-ID-Proximity-Sensor-Smart-Card-Reader-125Khz-EM4100-/221046309121?pt=BI_Security_Fire_Protection&hash=item3377630101)
 
+Some notes on using em:
+
+* <http://thetransistor.com/2011/10/hacking-cheap-rfid-readers/>
+* <http://electronics.stackexchange.com/questions/9899/seeking-cheap-rfid-reader-writer>
+* <http://hackaday.com/2011/11/19/getting-useful-data-from-a-dirt-cheap-rfid-reader/>
+
+Note that 13.56mhz and 125khz are different.
 
 An RFID cost estimate:
 
