@@ -41,7 +41,15 @@ bar visualization.
 Hardware layer
 --------------
 
-NFC labels + controllers.
+We could use NFC or RFID.  RFID is cheaper, but new fancy phones do NFC.
+RFID lets you detect/identify objects.  NFC lets you read *and* write a little
+bit of data to the tag.
+
+NFC operates at 13.56MHz.  RFID has low and high frequency modes; LF is 156KHz,
+HF is 13.56MHz; this means that (as far as I know) HF RFID and NFC are
+generally interoperable.
+
+The cheapo ($9) RFID readers only do 125KHz (RFID-LF).
 
 [ ] Select and vet hardware.
 [ ] Is it better to use Pi + NFC breakout (adafruit 364) or Pi + Arduino shields?
@@ -139,6 +147,10 @@ a 10-digit code.  Can we demux these streams?
   * [evdev-ruby](http://hewner.com/2006/08/21/evdev-for-ruby-with-morse-code/)
   * [stackoverflow evdev question](http://stackoverflow.com/questions/5834220/how-to-read-out-an-usb-rfid-reader-imitating-an-hid-keyboard-using-linux-and-pyt)
     * [python evdev](http://128.130.182.59:8888/ceat/git/index.php?p=ceatclient.git&a=blob&h=d5be91bcf14cee983afdb03cfe8172b8984ac629&hb=42b464b5a31541e77d9955940d408d1c4bb40f88&f=evdev3.py)
+
+Getting it running on OSX: a virtual USB keyboard?
+* http://www.practicalarduino.com/projects/virtual-usb-keyboard
+* https://github.com/practicalarduino/VirtualUsbKeyboard
 
 
 Web software layer
