@@ -16,7 +16,7 @@ Cannot get a read via OSX HID.
 
 Curious to try linux /dev/tty0
 * Plugged into Pi; Pi died.  Hypothesis: power draw
-  * TODO: Try via powered usb hub
+  * Later determined the issue was just a flaky ethernet cable?  Anyway, power draw was OK.  But likely want a powered USB hub for many readers.
 
 Opened up the device and found:
 * IC (likely USB) is STC 15F104E H3T001A
