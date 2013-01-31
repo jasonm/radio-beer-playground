@@ -45,7 +45,7 @@ We could use NFC or RFID.  RFID is cheaper, but new fancy phones do NFC.
 RFID lets you detect/identify objects.  NFC lets you read *and* write a little
 bit of data to the tag.
 
-NFC operates at 13.56MHz.  RFID has low and high frequency modes; LF is 156KHz,
+NFC operates at 13.56MHz.  RFID has low and high frequency modes; LF is 125KHz,
 HF is 13.56MHz; this means that (as far as I know) HF RFID and NFC are
 generally interoperable.
 
