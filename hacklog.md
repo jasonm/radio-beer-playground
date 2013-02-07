@@ -58,3 +58,35 @@ zcat /proc/config.gz > .config
 make oldconfig
 make modules_prepare
 ```
+
+2013-02-06 Pi Day!
+===================
+
+Raspberry Pi arrived yesterday, doing some early morning hacking today.
+
+It works very smoothly, USB and HDMI and the tiny USB wireless N and all.
+
+Also the RFID reader spits a nice 10 digits + CRLF to the input.
+
+Gonna try some ruby evdev:
+* http://technofetish.net/repos/buffaloplay/ruby_evdev/doc/
+  * 1.9 update: git://github.com/Spakman/ruby_evdev.git
+
+evdev info:
+* http://gvalkov.github.com/python-evdev/moduledoc.html
+* http://www.linuxjournal.com/article/6429
+
+So first get ruby and rubygems.
+* http://elinux.org/RPi_Ruby#Ruby_v1.9.x
+
+Fooling around with keyboard | # ~ keys etc
+* http://elinux.org/R-Pi_Troubleshooting#Re-mapping_the_keyboard_with_Debian_Squeeze
+* http://www.drijf.net/linuxppc/ISOvsANSI.html
+
+Got ruby_evdev working!
+
+ > t = Evdev::EventDevice.open("/dev/input/event0" , "a+")
+ > t.unique_id
+=> "FM8PU83-Ver0E-0000"
+ > t.device_name
+=> "USB Reader With Keyboard USB Reader With Keyboard"
