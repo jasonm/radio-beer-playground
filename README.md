@@ -129,6 +129,9 @@ An RFID cost estimate:
 RFID cost, $0.50/ea in 500qty?
 http://www.atlasrfidstore.com/Alien_Square_Wet_Inlay_WHITE_face_roll_of_500_p/aln-9662-fwrw_500.htm
 
+Multiple RFID reader on Arduino, serial demux
+  http://bildr.org/2011/02/rfid-arduino/
+
 Driver layer
 ------------
 
