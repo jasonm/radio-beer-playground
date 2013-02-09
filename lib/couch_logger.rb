@@ -1,28 +1,84 @@
-require './rfid_reader'
-require 'yaml'
+$: << File.dirname(__FILE__)
+# require 'rfid_reader'
+require 'fake_rfid_reader'
+require 'json'
+require 'socket'
+require 'couchrest'
 
 class CouchLogger
+
+  def initialize(config_hash)
+    @evdev_mappings = config_hash['input']
+    @couchdb_url = config_hash['output']['couchdb_url']
+    @debug_mode = config_hash['debug']
+  end
+
+  attr_writer :rfid_reader
+
+  def start
+    @rfid_reader ||= RfidReader.new
+
+    @evdev_mappings.each do |filename, description|
+      @rfid_reader.on(filename) do |_, unique_id, tag_id|
+        publish_scan_event({
+          tag_id: tag_id,
+          reader_description: description,
+          reader_evdev_filename: filename,
+          reader_evdev_unique_id: unique_id,
+          agent_hostname: hostname,
+          agent_public_ip: public_ip,
+          agent_local_ips: local_ips,
+          agent_pid: pid
+        })
+      end
+    end
+  end
+
+
+  private
+
+  def publish_scan_event(event_hash)
+    puts "JSONning it up: #{event_hash.to_json}"
+  end
+
+  def hostname
+    @hostname ||= Socket.gethostname
+  end
+
+  def public_ip
+    @public_ip ||= (`curl -s icanhazip.com`.strip rescue 'unknown')
+  end
+
+  def local_ips
+    @local_ips ||= Socket.ip_address_list.map(&:inspect_sockaddr)
+  end
+
+  def pid
+    @pid ||= Process.pid
+  end
 
 end
 
 if __FILE__ == $0
-  filename = ARGV[0] || '/dev/input/event0'
+  puts 'Test mode:'
 
-  puts "Test mode:"
-  puts "Available evdevs: #{Dir['/dev/input/event*']}"
+  config_file_path = ENV['CONFIG_FILE'] || File.join(Dir.pwd, '.couch_logger.json')
+  config = JSON.parse(File.open(config_file_path).read)
 
-  r = RfidReader.new
-  r.logger.level = Logger::DEBUG if ENV['DEBUG']
-  r.open
+  fake_rfid_reader = FakeRfidReader.new
+  couch_logger = CouchLogger.new(config)
+  couch_logger.rfid_reader = fake_rfid_reader
+  couch_logger.start
 
-  trap("SIGINT") { puts "Closing..." ; r.close ; exit }
+  trap("SIGINT") { couch_logger.stop }
 
-  r.on(:all) do |filename, tag_id|
-    puts "#{filename}: #{tag_id}"
-  end
-
-  while(true) do
+  while(true) do; 
     sleep 1
+    config['input'].each do |evdev_filename, description|
+      evdev_id = evdev_filename.match(/\d+/)
+      unique_id = "unique-evdev-#{evdev_id}"
+      fake_rfid_reader.emit_fake(evdev_filename, unique_id)
+    end
   end
 end
 
