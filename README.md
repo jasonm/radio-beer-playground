@@ -1,190 +1,51 @@
-nfc-beer
-========
+CouchLogger: Overview
+===============================================================================
 
-Notes for the `nfc-beer` project.
+This is designed to run on a Linux system (requires evdev) with multiple USB
+HID RFID readers and network connectivity.
 
-The Vision
-----------
+It reads RFID tag events off the taggers and logs these events into CouchDB.
 
-Homebrew party.  200 people.  16 taps.  Everybody has a tasting glass and a smartphone.
+Event devices are in `/dev/input/event*`.
 
-Your tasting glass has an NFC tag in it.  Each tap has a proximity sensor + NFC controller.
-When a bartender pours, the tap tells the system that Tap A poured Beer B into Cup C.
+Installing
+-------------------------------------------------------------------------------
 
-Then, you sync your glass with your smartphone via an app, and can not only see
-which beers you drank but also a host of background information about the beers:
-production details, pictures of the brewers picking out hops, temp and gravity during
-fermentation.
+* Install ruby 1.9.3.
+* Install rubygems
+* Install non-gem https://github.com/Spakman/ruby_evdev:
+  `ruby extconf.rb && make && sudo make install`
+* Install gem `couchrest`
 
-(If your smartphone doesnt do NFC yet, dont sweat; the label has a QR code and/or
-an alphanumeric shortcode you can fall back to.)
+Configuration
+-------------------------------------------------------------------------------
 
-You can also find out where to buy them, or order a few bottles delivered to your home.
+Edit `.couch_logger.yml` to configure.
 
-You can rate and keep notes, of course.  You can see who else has a similar taste profile.
+Here's an example `.couch_logger.yml` configuration file:
 
-A slick projected display behind the bar visualizes the popularity of each beer,
-current estimated tap levels, other fun associations.
+    input:
+      /dev/input/event0: RPi Alpha hosting USB RFID Reader Waltz
+      /dev/input/event1: RPi Alpha hosting USB RFID Reader Foxtrot
+      /dev/input/event2: RPi Alpha hosting USB RFID Reader Tango
+    ouput:
+      couchdb_url: https://user:pass@whatever.couchdb.url.you.use.com/dbname
 
-The Core
---------
+Input is collected from one or more evdev filenames.  List the ones you would
+like to read from, and give them friendly names.  Those friendly names will
+appear in the CouchDB database, and serve as a point of consistent reference in
+case you later plug the readers into different USB ports or machines entirely.
 
-The core of this project is comprised of a few moving parts:
-
-* NFC labels + taps hardware system
-* Data schema, repository, and API
-
-The higher-level features would be implemented as API clients on top of this;
-say, an HTML5 mobile app for smartphone users and a separate D3.js-based
-bar visualization.
-
-Hardware layer
---------------
-
-We could use NFC or RFID.  RFID is cheaper, but new fancy phones do NFC.
-RFID lets you detect/identify objects.  NFC lets you read *and* write a little
-bit of data to the tag.
-
-NFC operates at 13.56MHz.  RFID has low and high frequency modes; LF is 125KHz,
-HF is 13.56MHz; this means that (as far as I know) HF RFID and NFC are
-generally interoperable.
-
-The cheapo ($9) RFID readers only do 125KHz (RFID-LF).
-
-[ ] Select and vet hardware.
-[ ] Is it better to use Pi + NFC breakout (adafruit 364) or Pi + Arduino shields?
-
-* Adafruit NFC/RFID on Raspberry Pi
-  * <http://learn.adafruit.com/adafruit-nfc-rfid-on-raspberry-pi/overview>
-* PN532 NFC/RFID controller breakout board - v1.3
-  * <https://www.adafruit.com/products/364>
-* Adafruit PN532 NFC/RFID Controller Shield for Arduino + Extras
-  * <http://www.adafruit.com/products/789>
-* Alternative NFC Arduino shield
-  * <http://www.seeedstudio.com/depot/nfc-shield-p-916.html?cPath=132_134>
-* Possibly interface Pi with Arduino shield
-  * <http://www.raspberrypi.org/archives/tag/arduino>
-  * <http://omer.me/2012/05/introducing-ponte/>
-  * <http://hackaday.com/2012/05/06/using-arduino-shields-with-the-raspberry-pi/>
-* Possibly need to multiplex UART from Pi to NFC controllers
-  * <http://raspberrypi.stackexchange.com/questions/3475/how-to-get-more-than-one-uart-interface>
-* NFC chip types
-  * <http://www.gototags.com/docs/display/NFC/NFC+Chip+Types>
-* Printed NFC stickers
-  * <http://www.buynfctags.com/nfc-tags/stickers/custom-printed-nfc-sticker-ul.html>
-  * <http://www.buynfctags.com/custom-printed-nfc-sticker-ntag203.html>
-* Other NFC retailers
-  * <http://rapidnfc.com/>
-* Tasting glasses
-  * <http://beeradvocate.com/community/threads/4-oz-tasting-glasses-or-similar.14643/>
-
-USB-based readers:
-* <http://www.gototags.com/docs/display/NFC/NFC+Readers>
-* USB NFC read/write $45, or $40.50 in qty > 10
-  * <http://www.buynfctags.com/nfc-readers-and-writers/acs-acr122u-nfc-usb-reader-and-writer.html>
-
-Cost estimate for 1 installation, assume 16 taps, 200 attendees:
-
-    Item                 Qty     Ea      Total
-    Raspberry Pi         1       35.00    35.00
-    USB Hub              1       10.00    10.00
-    NFC controller       16      39.00   624.00
-    Printed NFC sticker  200      1.12   224.00
-    Tasting glasses      200      1.80   360.00
-    -------------------------------------------
-                         Grand total:   1244.00
-                   Cost per attendee:      6.22
-
-Of course beer, taps, location, etc. are extra.
-
-Another option instead of NFC is RFID.  NFC is two-way comm and read/write; but since
-this is fundamentally an inventory tracking system (object tracking), RFID's
-read-only mode suffices.  NFC lets you store small amounts of data onto the tag,
-and NFC-p2p mode lets peer devices communicate.  RFID is a passive, activated read
-technology.
-
-* [EBay USD RFID readers are about $9 shipped.](http://www.ebay.com/itm/New-Black-Security-USB-RFID-ID-Proximity-Sensor-Smart-Card-Reader-125Khz-EM4100-/221046309121?pt=BI_Security_Fire_Protection&hash=item3377630101)
-
-Some notes on using em:
-
-* <http://thetransistor.com/2011/10/hacking-cheap-rfid-readers/>
-* <http://electronics.stackexchange.com/questions/9899/seeking-cheap-rfid-reader-writer>
-* <http://hackaday.com/2011/11/19/getting-useful-data-from-a-dirt-cheap-rfid-reader/>
-
-Note that 13.56mhz and 125khz are different.
-
-An RFID cost estimate:
-
-    Item                 Qty     Ea      Total
-    Raspberry Pi         1       35.00    35.00
-    USB Hub              1       10.00    10.00
-    RFID controller      16       9.00   144.00
-    Printed RFID sticker 200      0.49    98.00
-    Tasting glasses      200      1.80   360.00
-    -------------------------------------------
-                         Grand total:    647.00
-                   Cost per attendee:      3.25
+Output is emitted to a CouchDB database.  Specify it in URL format.
 
 
-RFID cost, $0.50/ea in 500qty?
-http://www.atlasrfidstore.com/Alien_Square_Wet_Inlay_WHITE_face_roll_of_500_p/aln-9662-fwrw_500.htm
+Usage
+-------------------------------------------------------------------------------
 
-Multiple RFID reader on Arduino, serial demux
-  http://bildr.org/2011/02/rfid-arduino/
+Run:
 
-Driver layer
-------------
+    ruby couch_logger.rb
 
-The tap terminal machine will need drivers to receive NFC/RFID scans and
-emit events upstream to the web software layer.
+Run with debugging:
 
-If we use NFC, the driver layer is ???
-
-* http://code.google.com/p/nfc-tools/
-
-If we use RFID, we receive 1 HID-keyboard device per reader which just types
-a 10-digit code.  Can we demux these streams?
-
-* <http://stackoverflow.com/questions/8676135/osx-hid-filter-for-secondary-keyboard>
-* evdev on linux
-  * [evdev-ruby](http://hewner.com/2006/08/21/evdev-for-ruby-with-morse-code/)
-  * [stackoverflow evdev question](http://stackoverflow.com/questions/5834220/how-to-read-out-an-usb-rfid-reader-imitating-an-hid-keyboard-using-linux-and-pyt)
-    * [python evdev](http://128.130.182.59:8888/ceat/git/index.php?p=ceatclient.git&a=blob&h=d5be91bcf14cee983afdb03cfe8172b8984ac629&hb=42b464b5a31541e77d9955940d408d1c4bb40f88&f=evdev3.py)
-
-Getting it running on OSX: a virtual USB keyboard?
-* http://www.practicalarduino.com/projects/virtual-usb-keyboard
-* https://github.com/practicalarduino/VirtualUsbKeyboard
-
-
-Web software layer
-------------------
-
-Core entities:
-
-* `beer`: an individual batch of brew
-* `vessel`: how do we subdivide this into bottle etc
-* `pour`: event
-* `tag`: physical nfc tag
-
-Pre-fill database with beers in vessels.
-Smart taps publish `pour` events that link `beer` to a `tag`.
-
-API clients
-------------
-
-* *Mobile web app* registers `tag` with a `user`, fetches contents via core api
-  and displays `beer` information based on that.
-* *Bar display* fetches information from core api like tallies of pours, synthesiszes it,
-   and displays beautiful visualizations.
-
-Related Works
--------------
-
-* KegDroid—The Google-Powered Beer Tap
-  * <http://gizmodo.com/5906483/kegdroidthe-google+powered-beer-tap>
-
-* Flow sensor to Untappd
-  * <http://hackaday.com/2012/07/18/kegerator-tallies-your-pints-on-untappd-while-you-sit-back-with-a-cold-one/>
-
-* tokyohackerspace beer tap + rfid suggestion
-  * <https://groups.google.com/forum/#!msg/tokyohackerspace/-sKrUmhuJpc/vP5E0tX6SNYJ>
+    DEBUG=1 ruby couch_logger.rb
