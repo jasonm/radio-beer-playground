@@ -15,6 +15,14 @@ class RfidReader
     @evdev_open_method = Evdev::EventDevice.method(:open)
   end
 
+  def debug_mode=(enable_debugging)
+    if enable_debugging
+      @logger.level = Logger::DEBUG
+    else
+      @logger.level = Logger::WARN
+    end
+  end
+
   def open
     if @devices.any?
       close
@@ -135,7 +143,7 @@ if __FILE__ == $0
   puts "Test mode:"
 
   r = RfidReader.new
-  r.logger.level = Logger::DEBUG
+  r.debug_mode = true
   r.open
 
   trap("SIGINT") { puts "Closing..." ; r.close ; exit }
