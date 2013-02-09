@@ -91,7 +91,7 @@ class RfidReader
       matching_devices(matcher).each do |matching_device|
         if matching_device.filename == device_filename
           handlers.each do |handler|
-            handler.call(device_filename, read_string)
+            handler.call(device_filename, matching_device.unique_id, read_string)
             called += 1
           end
         end
@@ -149,12 +149,12 @@ if __FILE__ == $0
   trap("SIGINT") { puts "Closing..." ; r.close ; exit }
 
   Dir['/dev/input/event*'].each do |filename|
-    r.on(filename: filename) do |_, read_string|
+    r.on(filename: filename) do |_, _, read_string|
       puts "Specific handler received: #{filename} - #{read_string}"
     end
   end
 
-  r.on(:all) do |filename, read_string|
+  r.on(:all) do |filename, unique_id, read_string|
     puts "Matchall handler received: #{filename} - #{read_string}"
   end
 
