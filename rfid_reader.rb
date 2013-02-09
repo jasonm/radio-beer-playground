@@ -1,34 +1,9 @@
-# class Rfid:
-# generic input buffering and suscription:
-# * gives a list of rfid devices
-# * allows you to on/off for updates from any/all
-
-# class RfidDevice: <file: '...', description: '...'>
-# rfid = Rfid.new
-# rfid.devices # => [{ :file => '/dev...', :description => '...' }, ...]
-
-# class RfidE
-# rfid = Rfid.new
-# rfid.open do
-#   rfid.on(:device => rfid_device) { |fn, event| ... }         # device filename and the event
-#   rfid.on(:file => '/dev/input/event0') { |fn, event| ... }
-#   rfid.on(:name => 'USB Whatever 123456') { |fn, event| ... }
-#   rfid.on(:all) { |fn, event| ... }
-# end # or rfid.close if no block provided
-
 require 'evdev'
 require 'ostruct'
 require 'logger'
 
-
 # What happens if you #open, #on, #close, #open -- should the subscriptions persist?
 class RfidReader
-  # struct Registration
-  #   filename
-  #   name
-  #   unique_id
-  #   handle
-
   attr_reader :devices, :subscriptions
   attr_accessor :logger, :evdev_open_method, :debug
 
@@ -73,7 +48,6 @@ class RfidReader
 
   def on(matcher, &blk)
     unless matcher.is_a?(Hash) || matcher == :all
-      # TODO maybe also accept the literal ostruct objects
       raise ArgumentError.new("matcher must be :all or a hash, but got:\n#{matcher.inspect}")
     end
 
@@ -180,19 +154,3 @@ if __FILE__ == $0
     sleep 1
   end
 end
-
-# class CouchLogger
-# end
-# 
-# # CouchLogger.setup
-# setup mode:
-# * displays existing couchdb db url, if any, and prompts to change
-# * registers on all
-# * prompts user to tag a reader
-# * prompts user to associate reader with a device profile, or create a new device profile
-# * prompt user to add another reader or continue into interactive mode
-# 
-# # CouchLogger.relay
-# main mode:
-# * relays scan events to couchdb url
-# * shows streaming logs for each reader, one read at a time
