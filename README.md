@@ -20,16 +20,21 @@ Installing
 Configuration
 -------------------------------------------------------------------------------
 
-Edit `.couch_logger.yml` to configure.
+Edit `.couch_logger.json` to configure.
 
-Here's an example `.couch_logger.yml` configuration file:
+Here's an example `.couch_logger.json` configuration file:
 
-    input:
-      /dev/input/event0: RPi Alpha hosting USB RFID Reader Waltz
-      /dev/input/event1: RPi Alpha hosting USB RFID Reader Foxtrot
-      /dev/input/event2: RPi Alpha hosting USB RFID Reader Tango
-    ouput:
-      couchdb_url: https://user:pass@whatever.couchdb.url.you.use.com/dbname
+    {
+      "input": [
+        ["/dev/input/event0", "RPi Alpha hosting USB RFID Reader Waltz"],
+        ["/dev/input/event1", "RPi Alpha hosting USB RFID Reader Foxtrot"],
+        ["/dev/input/event2", "RPi Alpha hosting USB RFID Reader Tango"]
+      ],
+      "output": {
+        "couchdb_url": "https://user:pass@whatever.couchdb.url.you.use.com/dbname"
+      },
+      "debug": "debug"
+    }
 
 Input is collected from one or more evdev filenames.  List the ones you would
 like to read from, and give them friendly names.  Those friendly names will
@@ -38,6 +43,8 @@ case you later plug the readers into different USB ports or machines entirely.
 
 Output is emitted to a CouchDB database.  Specify it in URL format.
 
+Remove the `{ "debug": "debug" }` key/value pair to disable debugging output.
+
 
 Usage
 -------------------------------------------------------------------------------
@@ -45,7 +52,3 @@ Usage
 Run:
 
     ruby couch_logger.rb
-
-Run with debugging:
-
-    DEBUG=1 ruby couch_logger.rb

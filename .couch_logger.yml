@@ -1,6 +1,0 @@
-input:
-  /dev/input/event0: RPi Alpha hosting USB RFID Reader Waltz
-  /dev/input/event1: RPi Alpha hosting USB RFID Reader Foxtrot
-  /dev/input/event2: RPi Alpha hosting USB RFID Reader Tango
-ouput:
-  couchdb_url: https://user:pass@whatever.couchdb.url.you.use.com/dbname

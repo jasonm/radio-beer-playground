@@ -1,0 +1,12 @@
+{
+  "input": [
+    ["/dev/input/event0", "RPi Alpha hosting USB RFID Reader Waltz"],
+    ["/dev/input/event1", "RPi Alpha hosting USB RFID Reader Foxtrot"]
+  ],
+
+  "output": {
+    "couchdb_url": "https://user:pass@whatever.couchdb.url.you.use.com/dbname"
+  },
+
+  "debug": "debug"
+}
