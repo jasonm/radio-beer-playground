@@ -1,0 +1,151 @@
+# class Rfid:
+# generic input buffering and suscription:
+# * gives a list of rfid devices
+# * allows you to on/off for updates from any/all
+
+# class RfidDevice: <file: '...', description: '...'>
+# rfid = Rfid.new
+# rfid.devices # => [{ :file => '/dev...', :description => '...' }, ...]
+
+# class RfidE
+# rfid = Rfid.new
+# rfid.open do
+#   rfid.on(:device => rfid_device) { |fn, event| ... }         # device filename and the event
+#   rfid.on(:file => '/dev/input/event0') { |fn, event| ... }
+#   rfid.on(:name => 'USB Whatever 123456') { |fn, event| ... }
+#   rfid.on(:all) { |fn, event| ... }
+# end # or rfid.close if no block provided
+
+require 'evdev'
+require 'ostruct'
+
+# What happens if you #open, #on, #close, #open -- should the subscriptions persist?
+class RfidReader
+  # struct Registration
+  #   filename
+  #   name
+  #   unique_id
+  #   handle
+
+  def initialize
+    @devices = []
+    @subscriptions = {}
+  end
+
+  # DI for testing
+  attr_writer :evdev_open_method
+  def evdev_open_method
+    @evdev_open_method ||= Evdev::EventDevice.method(:open)
+  end
+
+  def open
+    if @devices.any?
+      close
+    end
+
+    device_filenames.each do |filename|
+      register_device(filename)
+    end
+
+    if block_given?
+      begin
+        yield
+      ensure
+        close
+      end
+    end
+  end
+
+  def close
+    @devices.each do |devices|
+      device.thread.kill
+      device.handle.close
+    end
+
+    @devices = []
+    @subscriptions = {}
+  end
+
+  def on(matcher, &blk)
+    @subscriptions[matcher] ||= []
+    @subscriptions[matcher] << blk
+  end
+
+  private
+
+  def matching_devices(matcher)
+    unless matcher.is_a?(Hash) || matcher == :all
+      # TODO maybe also accept the literal ostruct objects
+      raise ArgumentError.new("matcher must be :all or a hash, but got:\n#{matcher.inspect}")
+    end
+
+    if matcher == :all
+      @devices
+    else
+      @devices.select { |devices|
+        matcher.all? { |key, value|
+          devices.send(key) == value
+        }
+      }
+    end
+  end
+
+  def device_filenames
+    devices = Dir['/dev/input/event*']
+  end
+
+  def publish_scan_event(device_filename, read_string)
+    @subscriptions.each do |matcher, blk|
+      matching_devices(subscription).each do |matching_device|
+        if matching_device.filename == device_filename
+          blk.call(device_filename, read_string)
+        end
+      end
+    end
+  end
+
+  def register_device(filename)
+    handle = evdev_open_method.call(filename, "a+")
+
+    thread = Thread.new do
+      while(true) do
+        read_string = ""
+        ev = nil
+        until (ev && ev.feature.naming == "ENTER")
+          ev = handle.read_event
+          if %w(0 1 2 3 4 5 6 7 8 9).include?(ev.feature.naming) && ev.value == 1
+            read_string += ev.feature.naming
+          end
+        end
+        publish_scan_event(filename, read_string)
+      end
+    end
+
+    devices = OpenStruct.new({
+      filename: filename,
+      handle: handle,
+      name: handle.device_name,
+      unique_id: handle.unique_id,
+      thread: thread
+    })
+
+    @devices << devices
+  end
+end
+
+
+class CouchLogger
+end
+
+# CouchLogger.setup
+setup mode:
+* displays existing couchdb db url, if any, and prompts to change
+* registers on all
+* prompts user to tag a reader
+* prompts user to associate reader with a device profile, or create a new device profile
+* prompt user to add another reader or continue into interactive mode
+
+# CouchLogger.relay
+main mode:
+* relays scan events to couchdb url
+* shows streaming logs for each reader, one read at a time
