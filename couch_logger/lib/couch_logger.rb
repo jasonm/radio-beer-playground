@@ -43,7 +43,7 @@ class CouchLogger
       logger.debug("Registering to #{filename}")
       @rfid_reader.on(filename: filename) do |_, unique_id, tag_id|
         publish_scan_event({
-          type: 'event/rfid-scan',
+          type: 'rfid-scan',
           created_at: Time.now.to_s,
           tag_id: tag_id,
           reader_description: description,
