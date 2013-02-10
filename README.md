@@ -56,7 +56,7 @@ Run:
 Testing
 -------------------------------------------------------------------------------
 
-If you would like to emit fake events, use a `/dev/input/fake_event*` filename
+If you would like to generate fake events, use a `/dev/input/fake_event*` filename
 in your configuration and the app will emit fake events:
 
     {
@@ -71,3 +71,6 @@ in your configuration and the app will emit fake events:
     }
 
 You cannot mix real and fake devices.
+
+If you would like to emit output to the console instead of a CouchDB database,
+replace the `{ "couchdb_url": "https:..." }` key/value pair with `{ "stdout": "true" }`.
