@@ -1,0 +1,36 @@
+#!/usr/bin/env ruby
+
+require 'evdev'
+require_relative '../lib/rfid_reader'
+
+Dir['/dev/input/event*'].each do |evdev_filename|
+  t = Evdev::EventDevice.open(evdev_filename , "a+")
+  puts evdev_filename
+  puts "  interface Version is #{t.event_interface_version}"
+  puts "  bustype is #{t.bus_type_code}"
+  puts "  bustype is #{t.bus_type_name}"
+  puts "  vendor is #{t.vendor}"
+  puts "  product is #{t.product}"
+  puts "  version is #{t.version}"
+  puts "  name is #{t.device_name}"
+  puts "  topology is #{t.topology}"
+  puts "  uniqueid is #{t.unique_id}"
+  puts
+end
+
+puts "Scanning all evdevs for input, swipe tags now to identify..."
+puts "Press Ctrl+C to end."
+puts
+
+r = RfidReader.new
+r.open
+
+trap("SIGINT") { puts "Closing..." ; r.close ; exit }
+
+r.on(:all) do |filename, unique_id, read_string|
+  puts "Scan received: #{filename} - #{read_string}"
+end
+
+while(true) do
+  sleep 1
+end

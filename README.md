@@ -6,7 +6,7 @@ HID RFID readers and network connectivity.
 
 It reads RFID tag events off the taggers and logs these events into CouchDB.
 
-Event devices are in `/dev/input/event*`.
+Event devices ("evdevs") are in `/dev/input/event*`.
 
 Installing
 -------------------------------------------------------------------------------
@@ -16,6 +16,13 @@ Installing
 * Install non-gem https://github.com/Spakman/ruby_evdev:
   `ruby extconf.rb && make && sudo make install`
 * Install gem `couchrest`
+
+Preflight
+-------------------------------------------------------------------------------
+
+Once you attach your RFID reader(s) via USB, run `bin/list_evdevs` to
+see information about each.  You can then scan tags against the readers to
+learn the mapping from a phyiscal reader to its evdev filename path.
 
 Configuration
 -------------------------------------------------------------------------------
