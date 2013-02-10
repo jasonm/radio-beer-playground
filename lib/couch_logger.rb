@@ -18,7 +18,7 @@ class CouchLogger
     @evdev_mappings.each do |filename, description|
       load_reader_driver(filename)
 
-      @rfid_reader.on(filename) do |_, unique_id, tag_id|
+      @rfid_reader.on(filename: filename) do |_, unique_id, tag_id|
         publish_scan_event({
           tag_id: tag_id,
           reader_description: description,
