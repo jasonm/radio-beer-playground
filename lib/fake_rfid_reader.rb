@@ -1,6 +1,9 @@
+require 'digest/md5'
+
 class FakeRfidReader
-  def initialize(reads = [])
-    @reads = reads
+  def initialize(config = {})
+    @reads = config['reads'] || []
+    @fake_devices = config['input'] || [['/dev/input/fake_event0', 'My Fake RFID USB HID Reader']]
     @subscriptions = {}
   end
 
@@ -11,10 +14,13 @@ class FakeRfidReader
     @subscriptions = {}
   end
 
-  def emit_fake(evdev_filename = "/dev/fake_rfid_reader0", unique_id = "fake reader 0")
+  def emit_fakes
     @subscriptions.each do |matcher, handlers|
       handlers.each do |handler|
-        handler.call(evdev_filename, unique_id, next_read)
+        @fake_devices.each do |filename, descriptor|
+          unique_id = "fake-rfid-#{Digest::MD5.hexdigest(descriptor)}"
+          handler.call(filename, unique_id, next_read)
+        end
       end
     end
   end

@@ -52,3 +52,22 @@ Usage
 Run:
 
     ruby couch_logger.rb
+
+Testing
+-------------------------------------------------------------------------------
+
+If you would like to emit fake events, use a `/dev/input/fake_event*` filename
+in your configuration and the app will emit fake events:
+
+    {
+      "input": [
+        ["/dev/input/fake_event0", "My imaginary yellow USB RFID reader"],
+        ["/dev/input/fake_event1", "My imaginary blue USB RFID reader"],
+      ],
+      "output": {
+        "couchdb_url": "https://user:pass@whatever.couchdb.url.you.use.com/dbname"
+      },
+      "debug": "debug"
+    }
+
+You cannot mix real and fake devices.

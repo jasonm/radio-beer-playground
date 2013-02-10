@@ -1,12 +1,9 @@
 $: << File.dirname(__FILE__)
-# require 'rfid_reader'
-require 'fake_rfid_reader'
 require 'json'
 require 'socket'
 require 'couchrest'
 
 class CouchLogger
-
   def initialize(config_hash)
     @evdev_mappings = config_hash['input']
     @couchdb_url = config_hash['output']['couchdb_url']
@@ -19,6 +16,8 @@ class CouchLogger
     @rfid_reader ||= RfidReader.new
 
     @evdev_mappings.each do |filename, description|
+      load_reader_driver(filename)
+
       @rfid_reader.on(filename) do |_, unique_id, tag_id|
         publish_scan_event({
           tag_id: tag_id,
@@ -34,8 +33,15 @@ class CouchLogger
     end
   end
 
-
   private
+
+  def load_reader_driver(filename)
+    if filename =~ %r{/dev/input/fake_event}
+      require 'fake_rfid_reader'
+    else
+      require 'rfid_reader'
+    end
+  end
 
   def publish_scan_event(event_hash)
     puts "JSONning it up: #{event_hash.to_json}"
@@ -65,7 +71,8 @@ if __FILE__ == $0
   config_file_path = ENV['CONFIG_FILE'] || File.join(Dir.pwd, '.couch_logger.json')
   config = JSON.parse(File.open(config_file_path).read)
 
-  fake_rfid_reader = FakeRfidReader.new
+  require 'fake_rfid_reader'
+  fake_rfid_reader = FakeRfidReader.new(config)
   couch_logger = CouchLogger.new(config)
   couch_logger.rfid_reader = fake_rfid_reader
   couch_logger.start
@@ -74,11 +81,7 @@ if __FILE__ == $0
 
   while(true) do; 
     sleep 1
-    config['input'].each do |evdev_filename, description|
-      evdev_id = evdev_filename.match(/\d+/)
-      unique_id = "unique-evdev-#{evdev_id}"
-      fake_rfid_reader.emit_fake(evdev_filename, unique_id)
-    end
+    fake_rfid_reader.emit_fakes
   end
 end
 
