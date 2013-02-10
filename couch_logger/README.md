@@ -79,3 +79,25 @@ You cannot mix real and fake devices.
 
 If you would like to emit output to the console instead of a CouchDB database,
 replace the `{ "couchdb_url": "https:..." }` key/value pair with `{ "stdout": "true" }`.
+
+Output
+-------------------------------------------------------------------------------
+
+Output into the CouchDB database looks like this:
+
+    {
+       "_id": "c0ab75c3e61c0eb425bf5f41af847c91",
+       "_rev": "1-7a394d8779685285098d24cb6588f0a4",
+       "local_timestamp": "2013-02-09 18:22:34 -0800",
+       "tag_id": "0002066454",
+       "reader_description": "Jason Raspberry Pi with 125KHz Reader #1",
+       "reader_evdev_filename": "/dev/input/event0",
+       "reader_evdev_unique_id": "FM8PU83-Ver0E-0000",
+       "agent_hostname": "raspberrypi",
+       "agent_public_ip": "50.193.55.161",
+       "agent_local_ips": [
+           "127.0.0.1",
+           "192.168.1.108"
+       ],
+       "agent_pid": 3185
+    }
