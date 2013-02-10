@@ -1,4 +1,3 @@
-$: << File.dirname(__FILE__)
 require 'json'
 require 'socket'
 require 'couchrest'
@@ -30,7 +29,7 @@ class CouchLogger
 
   def start
     @rfid_reader ||= begin
-      require 'rfid_reader'
+      require_relative './rfid_reader'
       RfidReader.new
     end
 
@@ -39,7 +38,6 @@ class CouchLogger
     @evdev_mappings.each do |filename, description|
       logger.debug("Registering to #{filename}")
       @rfid_reader.on(filename: filename) do |_, unique_id, tag_id|
-        logger.debug("Got one!")
         publish_scan_event({
           tag_id: tag_id,
           reader_description: description,
@@ -93,46 +91,5 @@ class CouchLogger
 
   def pid
     @pid ||= Process.pid
-  end
-
-end
-
-if __FILE__ == $0
-  logger = Logger.new(STDOUT)
-  logger.debug('CouchLogger test mode.')
-
-  config_file_path = ENV['CONFIG_FILE'] || File.join(Dir.pwd, '.couch_logger.json')
-  config = JSON.parse(File.open(config_file_path).read)
-  logger.debug('Configuration loaded.')
-
-  couch_logger = CouchLogger.new(config)
-
-  running = true
-  trap("SIGINT") do
-    logger.debug('Shutting down...')
-    couch_logger.stop 
-    running = false
-  end
-
-  if(config['input'][0][0]) =~ %r{/dev/input/fake_event}
-    require 'fake_rfid_reader'
-    fake_rfid_reader = FakeRfidReader.new(config)
-    couch_logger.rfid_reader = fake_rfid_reader
-    couch_logger.start
-
-    interval = 1
-    logger.debug("Emitting fake events every #{interval} second(s)...")
-    while(running) do
-      fake_rfid_reader.emit_fakes
-      sleep interval
-    end
-  else
-    require 'rfid_reader'
-    logger.debug("Listening for events on attached device(s)...")
-    couch_logger.start
-    interval = 1
-    while(running) do
-      sleep interval
-    end
   end
 end
