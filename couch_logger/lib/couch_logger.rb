@@ -20,7 +20,7 @@ class CouchLogger
     @evdev_mappings = config['input']
 
     if config['output']['couchdb_url']
-      @db = CouchRest.database!(config['output']['couchdb_url'])
+      @db = CouchRest.database(config['output']['couchdb_url'])
       logger.debug("Connected to CouchDB at #{config['output']['couchdb_url']}")
       @emit_method = :emit_to_couchdb
     elsif config['output']['stdout']
