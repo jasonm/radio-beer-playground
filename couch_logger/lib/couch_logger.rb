@@ -1,7 +1,11 @@
 require 'json'
+require 'json/ext'
+JSON.parser = JSON::Ext::Parser
+
 require 'socket'
 require 'couchrest'
 require 'logger'
+
 
 class CouchLogger
   def initialize(config)
