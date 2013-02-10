@@ -15,11 +15,13 @@ class FakeRfidReader
   end
 
   def emit_fakes
-    @subscriptions.each do |matcher, handlers|
-      handlers.each do |handler|
-        @fake_devices.each do |filename, descriptor|
-          unique_id = "fake-rfid-#{Digest::MD5.hexdigest(descriptor)}"
-          handler.call(filename, unique_id, next_read)
+    @fake_devices.each do |filename, descriptor|
+      @subscriptions.each do |matcher, handlers|
+        if (matcher == :all) || (matcher[:filename] == filename)
+          handlers.each do |handler|
+            unique_id = "fake-rfid-#{Digest::MD5.hexdigest(descriptor)}"
+            handler.call(filename, unique_id, next_read)
+          end
         end
       end
     end
