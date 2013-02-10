@@ -11,7 +11,7 @@ Event devices ("evdevs") are in `/dev/input/event*`.
 Installing
 -------------------------------------------------------------------------------
 
-* Install ruby 1.9.3.
+* Install ruby 1.9.3
 * Install rubygems
 * Install non-gem https://github.com/Spakman/ruby_evdev:
   `ruby extconf.rb && make && sudo make install`
@@ -56,9 +56,7 @@ Remove the `{ "debug": "debug" }` key/value pair to disable debugging output.
 Usage
 -------------------------------------------------------------------------------
 
-Run:
-
-    ruby couch_logger.rb
+Run: `bin/couch_logger`
 
 Testing
 -------------------------------------------------------------------------------
