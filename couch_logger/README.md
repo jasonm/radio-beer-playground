@@ -88,6 +88,7 @@ Output into the CouchDB database looks like this:
     {
        "_id": "c0ab75c3e61c0eb425bf5f41af847c91",
        "_rev": "1-7a394d8779685285098d24cb6588f0a4",
+       "type": "event/rfid-scan",
        "local_timestamp": "2013-02-09 18:22:34 -0800",
        "tag_id": "0002066454",
        "reader_description": "Jason Raspberry Pi with 125KHz Reader #1",
