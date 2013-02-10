@@ -33,6 +33,10 @@ class CouchLogger
     end
   end
 
+  def stop
+    @rfid_reader.close
+  end
+
   private
 
   def load_reader_driver(filename)
