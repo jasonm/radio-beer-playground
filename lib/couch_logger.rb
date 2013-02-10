@@ -125,19 +125,3 @@ if __FILE__ == $0
     sleep interval
   end
 end
-
-# class CouchLogger
-# end
-# 
-# # CouchLogger.setup
-# setup mode:
-# * displays existing couchdb db url, if any, and prompts to change
-# * registers on all
-# * prompts user to tag a reader
-# * prompts user to associate reader with a device profile, or create a new device profile
-# * prompt user to add another reader or continue into interactive mode
-# 
-# # CouchLogger.relay
-# main mode:
-# * relays scan events to couchdb url
-# * shows streaming logs for each reader, one read at a time
