@@ -23,7 +23,7 @@ trap("SIGINT") do
 end
 
 if(config['input'][0][0]) =~ %r{/dev/input/fake_event}
-  require 'fake_rfid_reader'
+  require_relative '../lib/fake_rfid_reader'
   fake_rfid_reader = FakeRfidReader.new(config)
   couch_logger.rfid_reader = fake_rfid_reader
   couch_logger.start
