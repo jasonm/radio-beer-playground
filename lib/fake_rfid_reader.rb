@@ -5,16 +5,19 @@ class FakeRfidReader
     @reads = config['reads'] || []
     @fake_devices = config['input'] || [['/dev/input/fake_event0', 'My Fake RFID USB HID Reader']]
     @subscriptions = {}
+    @running = false
   end
 
   def debug_mode=(enable_debugging)
   end
 
   def open
-    @subscriptions = {}
+    @running = true
   end
 
   def emit_fakes
+    return unless @running
+
     @fake_devices.each do |filename, descriptor|
       @subscriptions.each do |matcher, handlers|
         if (matcher == :all) || (matcher[:filename] == filename)
@@ -28,6 +31,7 @@ class FakeRfidReader
   end
 
   def close
+    @running = false
   end
 
   def on(matcher, &blk)
