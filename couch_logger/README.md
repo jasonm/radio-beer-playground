@@ -17,6 +17,10 @@ Installing
   `ruby extconf.rb && make && sudo make install`
 * Install gem `couchrest`
 
+Configuration
+===============================================================================
+There are 3 steps to configuration: Preflight, Configuration, and Registration.
+
 Preflight
 -------------------------------------------------------------------------------
 
@@ -27,7 +31,7 @@ learn the mapping from a phyiscal reader to its evdev filename path.
 Configuration
 -------------------------------------------------------------------------------
 
-Edit `.couch_logger.json` to configure.
+Edit `.couch_logger.json` to include the devices you'd like.
 
 Here's an example `.couch_logger.json` configuration file:
 
@@ -52,9 +56,33 @@ Output is emitted to a CouchDB database.  Specify it in URL format.
 
 Remove the `{ "debug": "debug" }` key/value pair to disable debugging output.
 
+Registration
+-------------------------------------------------------------------------------
+
+You've specified which devices you want to use and what you'd like to call them.
+Next, we'll record this into your database and get unique database identifiers
+for them.
+
+Run `bin/couch_logger` and follow the directions it gives you for new device
+IDs, and add them to your configuration file:
+
+
+    {
+      "input": [
+        ["/dev/input/event0", "RPi Alpha hosting USB RFID Reader Waltz",   "aaaaaaaabacfa594ebb76c7309d64757"],
+        ["/dev/input/event1", "RPi Alpha hosting USB RFID Reader Foxtrot", "aaaaaaaabacfa594ebb76c7309d64758"],
+        ["/dev/input/event2", "RPi Alpha hosting USB RFID Reader Tango",   "aaaaaaaabacfa594ebb76c7309d64759"]
+      ],
+      "output": {
+        "couchdb_url": "https://user:pass@whatever.couchdb.url.you.use.com/dbname"
+      },
+      "debug": "debug"
+    }
+
+Ready to rock.
 
 Usage
--------------------------------------------------------------------------------
+===============================================================================
 
 Run: `bin/couch_logger`
 

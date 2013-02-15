@@ -39,20 +39,18 @@ class CouchLogger
 
     @rfid_reader.debug_mode = @config['debug']
 
-    @evdev_mappings.each do |filename, description|
+    @evdev_mappings.each do |filename, description, reader_id|
       logger.debug("Registering to #{filename}")
       @rfid_reader.on(filename: filename) do |_, unique_id, tag_id|
         publish_scan_event({
           type: 'rfid-scan',
           created_at: Time.now.to_s,
-          tag_id: tag_id,
-          reader_description: description,
-          reader_evdev_filename: filename,
-          reader_evdev_unique_id: unique_id,
           agent_hostname: hostname,
           agent_public_ip: public_ip,
           agent_local_ips: local_ips,
-          agent_pid: pid
+          agent_pid: pid,
+          reader_id: reader_id,
+          tag_id: tag_id
         })
       end
     end
@@ -62,6 +60,32 @@ class CouchLogger
 
   def stop
     @rfid_reader.close
+  end
+
+  def any_unregistered_device_tokens?
+    @config['input'].any? { |reader_attributes_array| reader_attributes_array.size == 2 }
+  end
+
+  def register_new_device_tokens
+    @config['input'].each do |reader_attributes_array|
+      evdev_filename, description, database_id = reader_attributes_array
+
+      if database_id.nil?
+        response = @db.save_doc({
+          type: 'rfid-reader',
+          created_at: Time.now.to_s,
+          reader_description: description,
+          reader_evdev_filename: evdev_filename,
+          agent_hostname: hostname,
+          agent_public_ip: public_ip,
+          agent_local_ips: local_ips,
+          agent_pid: pid
+        })
+
+        new_id = response['id']
+        logger.info "Registered device #{evdev_filename}: '#{description}' as id: #{new_id}"
+      end
+    end
   end
 
   private
