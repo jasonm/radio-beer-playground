@@ -28,8 +28,20 @@ class RfidReader
       close
     end
 
-    device_filenames.each do |filename|
-      register_device(filename)
+    @connect_listener_thread = Thread.new do
+      while(true) do
+        logger.debug "Polling for new devices..."
+
+        device_filenames.each do |filename|
+          is_new_device = @devices.none? { |device| device.filename == filename }
+
+          if is_new_device
+            register_device(filename)
+          end
+        end
+
+        sleep 1
+      end
     end
 
     if block_given?
@@ -42,6 +54,8 @@ class RfidReader
   end
 
   def close
+    @connect_listener_thread.kill
+
     @devices.each do |device|
       logger.debug("Killing thread for #{device.filename} #{device.thread}")
       logger.debug("Closing handle for #{device.filename} #{device.handle}")
@@ -91,7 +105,7 @@ class RfidReader
       matching_devices(matcher).each do |matching_device|
         if matching_device.filename == device_filename
           handlers.each do |handler|
-            handler.call(device_filename, matching_device.unique_id, read_string)
+            handler.call(device_filename, matching_device.topology, read_string)
             called += 1
           end
         end
@@ -102,11 +116,12 @@ class RfidReader
   end
 
   def register_device(filename)
-    logger.debug("#{filename} Probing...")
+    logger.debug("#{filename} connecting...")
     handle = evdev_open_method.call(filename, "a+")
 
     thread = Thread.new do
-      while(true) do
+      connected = true
+      while(connected) do
         begin
           read_string = ""
           event = nil
@@ -117,6 +132,12 @@ class RfidReader
             end
           end
           publish_scan_event(filename, read_string)
+        rescue Errno::ENODEV => e
+          logger.debug("#{filename} disconnected.")
+          @devices.reject! { |device| device.filename == filename }
+          logger.debug("#{@devices.size} still connected.")
+          handle.close
+          connected = false
         rescue Exception => e
           logger.error("#{filename} Exception in reader thread:")
           logger.error("#{e.class}: #{e.message}")
@@ -129,36 +150,14 @@ class RfidReader
       filename: filename,
       handle: handle,
       name: handle.device_name,
-      unique_id: handle.unique_id,
+      topology: handle.topology,
       thread: thread
     })
 
-    logger.debug("#{filename} Registered for #{device.name} #{device.unique_id}")
+    logger.debug("#{filename} Registered for #{device.name} #{device.topology}")
 
     @devices << device
-  end
-end
 
-if __FILE__ == $0
-  puts "Test mode:"
-
-  r = RfidReader.new
-  r.debug_mode = true
-  r.open
-
-  trap("SIGINT") { puts "Closing..." ; r.close ; exit }
-
-  Dir['/dev/input/event*'].each do |filename|
-    r.on(filename: filename) do |_, _, read_string|
-      puts "Specific handler received: #{filename} - #{read_string}"
-    end
-  end
-
-  r.on(:all) do |filename, unique_id, read_string|
-    puts "Matchall handler received: #{filename} - #{read_string}"
-  end
-
-  while(true) do
-    sleep 1
+    logger.debug("#{@devices.size} now connected.")
   end
 end

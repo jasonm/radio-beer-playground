@@ -24,11 +24,12 @@ puts
 
 r = RfidReader.new
 r.open
+r.debug_mode = true
 
 trap("SIGINT") { puts "Closing..." ; r.close ; exit }
 
-r.on(:all) do |filename, unique_id, read_string|
-  puts "Scan received: #{filename} - #{read_string}"
+r.on(:all) do |filename, topology, read_string|
+  puts "Scan received: #{filename} - #{read_string} on #{topology}"
 end
 
 while(true) do
